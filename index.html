@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TV</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;cursor:none}
+video{width:100%;height:100%;object-fit:contain;display:block}
+img{width:100%;height:100%;object-fit:contain;display:none;position:absolute;top:0;left:0}
+</style>
+</head>
+<body>
+<video id="v" autoplay muted playsinline></video>
+<img id="img">
+<script>
+var normal=[
+{type:"video",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/opening_reverse.webm"},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_9.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_3.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_15.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_6.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_11.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_18.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_19.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_1.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_14.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_4.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_17.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_8.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_12.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_5.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_10.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_2.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_16.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_7.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_21.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_22.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_23.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_24.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_25.png",duration:20000},
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/photo_13.png",duration:20000}
+];
+var lunch=[
+{type:"image",src:"https://pub-1d44c9b74e4842c2aaffab46d0ad62b2.r2.dev/lunch.png"}
+];
+var idx=0;
+var mode="";
+var v=document.getElementById("v");
+var img=document.getElementById("img");
+var imgTimer=null;
+
+function getMode(){
+var h=new Date().getHours();
+var m=new Date().getMinutes();
+var t=h*60+m;
+if(t>=779&&t<839)return "lunch";
+return "normal";
+}
+
+function next(){
+var list=(mode==="lunch")?lunch:normal;
+idx=(idx+1)%list.length;
+play();
+}
+
+function play(){
+var cur=getMode();
+if(cur!==mode){mode=cur;idx=0;}
+var list=(mode==="lunch")?lunch:normal;
+var item=list[idx];
+if(imgTimer){clearTimeout(imgTimer);imgTimer=null;}
+if(item.type==="video"){
+img.style.display="none";
+v.style.display="block";
+v.src=item.src;
+v.muted=true;
+v.play();
+}else{
+v.pause();
+v.style.display="none";
+img.style.display="block";
+img.src=item.src;
+if(mode==="normal"){
+imgTimer=setTimeout(function(){next();},item.duration);
+}
+}
+}
+
+v.addEventListener("ended",function(){next();});
+v.addEventListener("error",function(){next();});
+
+play();
+
+setInterval(function(){
+var cur=getMode();
+if(cur!==mode)play();
+},10000);
+
+document.body.addEventListener("click",function(){
+if(document.fullscreenElement)return;
+document.documentElement.requestFullscreen().catch(function(){});
+});
+</script>
+</body>
+</html>
